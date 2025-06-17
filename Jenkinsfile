@@ -9,13 +9,13 @@ pipeline {
     }
 
     stages {
-        stage("Checkout") {
+        stage("Récup Code source") {
             steps {
                 git branch: 'master', url: 'https://github.com/goupe-4/unit-converter'
             }
         }
 
-        stage("Build Docker Image") {
+        stage("Création de l'Image") {
             steps {
                 sh "docker build -t $DOCKER_IMAGE ."
             }
