@@ -1,6 +1,8 @@
 pipeline {
+    // utiliser n'importe quel agent
     agent any
 
+    // Déclaration de nos variables globaux
     environment {
         IMAGE_NAME       = "unit-converter-app"
         IMAGE_VERSION    = "1.${BUILD_NUMBER}"
@@ -8,20 +10,24 @@ pipeline {
         DOCKER_CONTAINER = "unit-converter"
     }
 
+    // Création des différents Stage
     stages {
-        stage("Récup Code source") {
+        //Récuperation du code source sur github
+        stage("Récupèratin du Code source") {
             steps {
                 git branch: 'master', url: 'https://github.com/goupe-4/unit-converter'
             }
         }
 
+        //Création de l'image
         stage("Création de l'Image") {
             steps {
                 sh "docker build -t $DOCKER_IMAGE ."
             }
         }
 
-        stage("Push to Docker Hub") {
+        // Envoyer l'image sur Docker hub
+        stage("Envoyer l'image sur Docker hub") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'afma', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh """
@@ -32,8 +38,9 @@ pipeline {
                 }
             }
         }
-
-        stage("Deploy Container") {
+  
+        //Déployer le conteneur sur Docker
+        stage("Déploiement du Container") {
             steps {
                 sh """
                 docker container stop $DOCKER_CONTAINER || true
